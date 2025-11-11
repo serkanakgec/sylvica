@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Bağlantı Testi</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Supabase Bağlantı Testi</h1>
+    <p>Sonuçları görmek için tarayıcınızın Geliştirici Konsolunu (F12) açın.</p>
+
+    <script>
+        const SUPABASE_URL = "https://elyksmubfecgxeskxgbw.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVseWtzbXViZmVjZ3hlc2t4Z2J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3OTI2NTksImV4cCI6MjA3ODM2ODY1OX0.XUWXBpTU90_sqK6S9MG1J69EBCjWFIu8s4X1ANXsaKE";
+        
+        const { createClient } = supabase;
+        const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        console.log("Supabase istemcisi oluşturuldu. Sorgu gönderiliyor...");
+
+        async function testConnection() {
+            const { data, error } = await db
+                .from('reference_codes')
+                .select('*');
+
+            if (error) {
+                console.error("HATA:", error);
+                document.body.innerHTML += `<h2 style="color: red;">Bağlantı Başarısız! Hata: ${error.message}</h2>`;
+            } else {
+                console.log("BAŞARILI! Veri:", data);
+                document.body.innerHTML += `<h2 style="color: green;">Bağlantı Başarılı! ${data.length} kayıt bulundu.</h2>`;
+            }
+        }
+
+        testConnection();
+    </script>
+</body>
+</html>
