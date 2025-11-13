@@ -94,7 +94,7 @@ export function CardSelectionPage({ readingType, onComplete, language, onLanguag
                 >
                   {/* 6. Kart seçildiğinde yüzünü, seçilmediğinde arkasını gösterme */}
                   {!isSelected ? (
-                    <img src="https://previews.123rf.com/images/antusenoktanya/antusenoktanya2304/antusenoktanya230400014/204295155-mystical-tarot-card-witch-holding-the-sun-engraved-on-a-black-background-background-for-stories.jpg" alt="Tarot Card Back" className="w-full h-full object-cover rounded-lg" />
+                    <img src="https://i.ibb.co/wh7PS11M/Whats-App-mage-2025-11-13-at-22-13-50.jpg" alt="Tarot Card Back" className="w-full h-full object-cover rounded-lg" />
                   ) : (
                     <div className="relative w-full h-full">
                       <div
