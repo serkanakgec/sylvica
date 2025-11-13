@@ -1,238 +1,610 @@
 <!DOCTYPE html>
 <html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sylvica Admin Dashboard</title>
-    <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #333;
-        }
-        .container { max-width: 1400px; margin: 0 auto; }
-        .header {
-            background: white; padding: 20px; border-radius: 12px;
-            margin-bottom: 30px; display: flex; justify-content: space-between;
-            align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .header h1 { color: #667eea; }
-        .content-section { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: fixed; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e0e0e0; word-wrap: break-word; }
-        th { background: #f8f9fa; font-weight: 600; color: #667eea; }
-        tr:hover { background: #f8f9fa; }
-        .action-btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
-        .delete-btn { background: #e74c3c; color: white; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; display: inline-block; }
-        .badge-unlimited { background: #ffd700; color: #333; }
-        .badge-single_use { background: #3498db; color: white; }
-        .badge-used { background: #e74c3c; color: white; }
-        .badge-active { background: #2ecc71; color: white; }
-        .badge-consultancy { background: #9b59b6; color: white; }
-        .badge-normal { background: #1abc9c; color: white; }
-        .loading, .error { text-align: center; padding: 40px; font-size: 1.2em; }
-        .loading { color: #667eea; }
-        .error { color: #e74c3c; }
-        .create-code-section { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .create-code-section h3 { color: #667eea; margin-bottom: 15px; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; align-items: end; }
-        .form-field { display: flex; flex-direction: column; }
-        .form-field label { font-weight: 600; margin-bottom: 8px; font-size: 14px; }
-        .form-field select { padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; background: white; }
-        .form-field select:focus { outline: none; border-color: #667eea; }
-        .create-btn { padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: transform 0.2s; }
-        .create-btn:hover { transform: translateY(-2px); }
-        .create-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .message-box { padding: 12px; border-radius: 8px; margin-top: 15px; display: none; }
-        .message-box.show { display: block; }
-        .success { background: #d4edda; color: #155724; }
-        .error-msg { background: #f8d7da; color: #721c24; }
-        pre { background-color: #f4f4f4; padding: 10px; border-radius: 4px; white-space: pre-wrap; word-break: break-all; font-size: 0.8em; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #333;
+      }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .header {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+      .header h1 {
+        color: #667eea;
+      }
+      .content-section,
+      .create-code-section {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        table-layout: fixed;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+        word-wrap: break-word;
+      }
+      th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #667eea;
+      }
+      tr:hover {
+        background: #f8f9fa;
+      }
+      .action-btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .delete-btn {
+        background: #e74c3c;
+        color: white;
+      }
+      .copy-btn {
+        background: #3498db;
+        color: white;
+      }
+      .view-btn {
+        background: #2ecc71;
+        color: white;
+      }
+      .badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+      }
+      .badge-unlimited {
+        background: #ffd700;
+        color: #333;
+      }
+      .badge-single_use {
+        background: #3498db;
+        color: white;
+      }
+      .badge-used {
+        background: #e74c3c;
+        color: white;
+      }
+      .badge-active {
+        background: #2ecc71;
+        color: white;
+      }
+      .badge-consultancy {
+        background: #9b59b6;
+        color: white;
+      }
+      .badge-normal {
+        background: #1abc9c;
+        color: white;
+      }
+      .loading,
+      .error {
+        text-align: center;
+        padding: 40px;
+        font-size: 1.2em;
+      }
+      .loading {
+        color: #667eea;
+      }
+      .error {
+        color: #e74c3c;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        align-items: end;
+      }
+      .form-field {
+        display: flex;
+        flex-direction: column;
+      }
+      .form-field label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+      .form-field select,
+      .form-field input {
+        padding: 10px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        background: white;
+      }
+      .form-field select:focus,
+      .form-field input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+      .create-btn {
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: transform 0.2s;
+      }
+      .create-btn:hover {
+        transform: translateY(-2px);
+      }
+      .message-box {
+        padding: 12px;
+        border-radius: 8px;
+        margin-top: 15px;
+        display: none;
+      }
+      .message-box.show {
+        display: block;
+      }
+      .success {
+        background: #d4edda;
+        color: #155724;
+      }
+      .error-msg {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      pre {
+        background-color: #f4f4f4;
+        padding: 10px;
+        border-radius: 4px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 0.8em;
+      }
+      .user-info-btn {
+        background: #f1f1f1;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin-bottom: 4px;
+        font-size: 12px;
+      }
+      /* Modal */
+      #resultModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+      }
+      #resultModal .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80%;
+        overflow-y: auto;
+        position: relative;
+      }
+      #resultModal .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div id="dashboard" class="dashboard">
-            <div class="header">
-                <h1>🔮 Sylvica Admin Dashboard</h1>
-            </div>
+      <div class="header">
+        <h1>🔮 Sylvica Admin Dashboard</h1>
+      </div>
 
-            <div id="codesSection" class="content-section">
-                <div class="create-code-section">
-                    <h3>➕ Yeni Referans Kodu Oluştur</h3>
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label for="readingTypeSelect">Okuma Türü</label>
-                            <select id="readingTypeSelect">
-                                <option value="daily">Daily Tarot (1 Kart)</option>
-                                <option value="3-card">3 Card Spread (3 Kart)</option>
-                                <option value="celtic-cross">Celtic Cross (10 Kart)</option>
-                                <option value="relationship">Relationship & Love (7 Kart)</option>
-                                <option value="career">Career & Money (6 Kart)</option>
-                                <option value="soulmate">Soulmate Reading (7 Kart)</option>
-                                <option value="year">Year Ahead (12 Kart)</option>
-                                <option value="divination">Divination Tarot (5 Kart)</option>
-                                <option value="psychological">Psychological Tarot (6 Kart)</option>
-                                <option value="spiritual">Spiritual Guidance (5 Kart)</option>
-                                <option value="meditation">Meditation Tarot (4 Kart)</option>
-                                <option value="decision">Decision Making (5 Kart)</option>
-                                <option value="turkish-coffee">Türk Kahvesi Falı</option>
-                                <option value="face-reading">Yüz Falı</option>
-                                <option value="palm-reading">El Falı</option>
-                            </select>
-                        </div>
-                        <div class="form-field">
-                            <label for="codeTypeSelect">Kod Türü</label>
-                            <select id="codeTypeSelect">
-                                <option value="normal">Normal</option>
-                                <option value="consultancy">Danışmanlık</option>
-                            </select>
-                        </div>
-                        <div class="form-field">
-                            <label for="usageLimitSelect">Kullanım Limiti</label>
-                            <select id="usageLimitSelect">
-                                <option value="single_use">Tek Kullanım</option>
-                                <option value="unlimited">Sınırsız</option>
-                            </select>
-                        </div>
-                        <button id="createBtn" class="create-btn" onclick="createReferenceCode()">Oluştur</button>
-                    </div>
-                    <div id="messageBox" class="message-box"></div>
-                </div>
-                <div id="codesTableContainer"><div class="loading">Yükleniyor...</div></div>
-            </div>
+      <!-- Filtreleme Alanı -->
+      <div class="create-code-section">
+        <h3>🔎 Filtreleme</h3>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="filterReadingType">Okuma Türü</label>
+            <select id="filterReadingType" onchange="applyFilters()">
+              <option value="">Tümü</option>
+              <option value="daily">Daily Tarot (1 Kart)</option>
+              <option value="3-card">3 Card Spread (3 Kart)</option>
+              <option value="celtic-cross">Celtic Cross (10 Kart)</option>
+              <option value="relationship">Relationship & Love (7 Kart)</option>
+              <option value="career">Career & Money (6 Kart)</option>
+              <option value="soulmate">Soulmate Reading (7 Kart)</option>
+              <option value="year">Year Ahead (12 Kart)</option>
+              <option value="divination">Divination Tarot (5 Kart)</option>
+              <option value="psychological">
+                Psychological Tarot (6 Kart)
+              </option>
+              <option value="spiritual">Spiritual Guidance (5 Kart)</option>
+              <option value="meditation">Meditation Tarot (4 Kart)</option>
+              <option value="decision">Decision Making (5 Kart)</option>
+              <option value="turkish-coffee">Türk Kahvesi Falı</option>
+              <option value="face-reading">Yüz Falı</option>
+              <option value="palm-reading">El Falı</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="filterCodeType">Kod Türü</label>
+            <select id="filterCodeType" onchange="applyFilters()">
+              <option value="">Tümü</option>
+              <option value="normal">Normal</option>
+              <option value="consultancy">Danışmanlık</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="filterUsageLimit">Limit</label>
+            <select id="filterUsageLimit" onchange="applyFilters()">
+              <option value="">Tümü</option>
+              <option value="single_use">Tek Kullanım</option>
+              <option value="unlimited">Sınırsız</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="filterStatus">Durum</label>
+            <select id="filterStatus" onchange="applyFilters()">
+              <option value="">Tümü</option>
+              <option value="active">Aktif</option>
+              <option value="used">Kullanıldı</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="filterStartDate">Başlangıç Tarihi</label>
+            <input type="date" id="filterStartDate" onchange="applyFilters()" />
+          </div>
+          <div class="form-field">
+            <label for="filterEndDate">Bitiş Tarihi</label>
+            <input type="date" id="filterEndDate" onchange="applyFilters()" />
+          </div>
+          <div class="form-field" style="align-self: end">
+            <button
+              class="create-btn"
+              style="background: #e67e22"
+              onclick="resetFilters()"
+            >
+              Filtreleri Temizle
+            </button>
+          </div>
         </div>
+      </div>
+
+      <!-- Yeni Kod Oluştur -->
+      <div class="create-code-section">
+        <h3>➕ Yeni Referans Kodu Oluştur</h3>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="readingTypeSelect">Okuma Türü</label>
+            <select id="readingTypeSelect">
+              <option value="daily">Daily Tarot (1 Kart)</option>
+              <option value="3-card">3 Card Spread (3 Kart)</option>
+              <option value="celtic-cross">Celtic Cross (10 Kart)</option>
+              <option value="relationship">Relationship & Love (7 Kart)</option>
+              <option value="career">Career & Money (6 Kart)</option>
+              <option value="soulmate">Soulmate Reading (7 Kart)</option>
+              <option value="year">Year Ahead (12 Kart)</option>
+              <option value="divination">Divination Tarot (5 Kart)</option>
+              <option value="psychological">
+                Psychological Tarot (6 Kart)
+              </option>
+              <option value="spiritual">Spiritual Guidance (5 Kart)</option>
+              <option value="meditation">Meditation Tarot (4 Kart)</option>
+              <option value="decision">Decision Making (5 Kart)</option>
+              <option value="turkish-coffee">Türk Kahvesi Falı</option>
+              <option value="face-reading">Yüz Falı</option>
+              <option value="palm-reading">El Falı</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="codeTypeSelect">Kod Türü</label>
+            <select id="codeTypeSelect">
+              <option value="normal">Normal</option>
+              <option value="consultancy">Danışmanlık</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="usageLimitSelect">Kullanım Limiti</label>
+            <select id="usageLimitSelect">
+              <option value="single_use">Tek Kullanım</option>
+              <option value="unlimited">Sınırsız</option>
+            </select>
+          </div>
+          <button
+            id="createBtn"
+            class="create-btn"
+            onclick="createReferenceCode()"
+          >
+            Oluştur
+          </button>
+        </div>
+        <div id="messageBox" class="message-box"></div>
+      </div>
+
+      <!-- Kodlar Tablosu -->
+      <div id="codesTableContainer" class="content-section">
+        <div class="loading">Yükleniyor...</div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="resultModal">
+      <div class="modal-content">
+        <button class="close-btn" onclick="closeModal()">✖</button>
+        <pre id="modalContent"></pre>
+      </div>
     </div>
 
     <script>
-        // --- Supabase Client Initialization ---
-        const SUPABASE_URL = "https://elyksmubfecgxeskxgbw.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVseWtzbXViZmVjZ3hlc2t4Z2J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3OTI2NTksImV4cCI6MjA3ODM2ODY1OX0.XUWXBpTU90_sqK6S9MG1J69EBCjWFIu8s4X1ANXsaKE";
-        const { createClient } = supabase;
-        const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const SUPABASE_URL = 'https://elyksmubfecgxeskxgbw.supabase.co';
+      const SUPABASE_ANON_KEY =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVseWtzbXViZmVjZ3hlc2t4Z2J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3OTI2NTksImV4cCI6MjA3ODM2ODY1OX0.XUWXBpTU90_sqK6S9MG1J69EBCjWFIu8s4X1ANXsaKE';
+      const { createClient } = supabase;
+      const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // --- DOMContentLoaded Listener ---
-        document.addEventListener('DOMContentLoaded', () => {
-            loadReferenceCodes();
+      let allCodes = [];
+
+      document.addEventListener('DOMContentLoaded', loadReferenceCodes);
+
+      function showMessage(type, text) {
+        const msgBox = document.getElementById('messageBox');
+        msgBox.textContent = text;
+        msgBox.className = 'message-box show';
+        msgBox.classList.add(type === 'success' ? 'success' : 'error-msg');
+        setTimeout(() => msgBox.classList.remove('show'), 5000);
+      }
+
+      async function loadReferenceCodes() {
+        const container = document.getElementById('codesTableContainer');
+        container.innerHTML =
+          '<div class="loading">Referans kodları yükleniyor...</div>';
+
+        const { data: codes, error } = await db
+          .from('reference_codes')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          container.innerHTML = `<div class="error">Hata: Kodlar yüklenemedi. (${error.message})</div>`;
+          return;
+        }
+
+        allCodes = codes;
+        renderCodes(codes);
+      }
+
+      async function createReferenceCode() {
+        const createBtn = document.getElementById('createBtn');
+        createBtn.disabled = true;
+        createBtn.textContent = 'Oluşturuluyor...';
+
+        const readingType = document.getElementById('readingTypeSelect').value;
+        const codeType = document.getElementById('codeTypeSelect').value;
+        const usageLimit = document.getElementById('usageLimitSelect').value;
+        const generatedCode =
+          'SYL-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+        const newCode = {
+          code: generatedCode,
+          reading_type: readingType,
+          type: codeType,
+          usage_limit: usageLimit,
+          is_used: false,
+        };
+
+        const { data, error } = await db
+          .from('reference_codes')
+          .insert([newCode])
+          .select();
+
+        if (error)
+          showMessage('error', `Hata: Kod oluşturulamadı. (${error.message})`);
+        else {
+          showMessage(
+            'success',
+            `✅ Kod başarıyla oluşturuldu: ${generatedCode}`
+          );
+          loadReferenceCodes();
+        }
+
+        createBtn.disabled = false;
+        createBtn.textContent = 'Oluştur';
+      }
+
+      async function deleteCode(id) {
+        if (
+          !confirm('Bu kodu kalıcı olarak silmek istediğinizden emin misiniz?')
+        )
+          return;
+
+        const { error } = await db
+          .from('reference_codes')
+          .delete()
+          .eq('id', id);
+
+        if (error) alert(`Hata: Kod silinemedi. (${error.message})`);
+        else loadReferenceCodes();
+      }
+
+      function renderCodes(codes) {
+        const container = document.getElementById('codesTableContainer');
+        if (!codes.length) {
+          container.innerHTML =
+            '<p class="loading">Filtrelere uyan kod bulunamadı.</p>';
+          return;
+        }
+
+        const html = `
+        <h2>Referans Kodları</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Kod</th>
+                    <th>Okuma Türü</th>
+                    <th>Kod Türü</th>
+                    <th>Limit</th>
+                    <th>Durum</th>
+                    <th>Kullanıcı Bilgileri</th>
+                    <th>Okuma Sonucu</th>
+                    <th>Oluşturulma</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${codes
+                  .map(
+                    (code) => `
+                    <tr>
+                        <td>
+                            <code>${code.code}</code>
+                            <button class="action-btn copy-btn" onclick="copyCode('${
+                              code.code
+                            }')">Kopyala</button>
+                        </td>
+                        <td>${code.reading_type || '---'}</td>
+                        <td><span class="badge badge-${code.type}">${
+                      code.type === 'consultancy' ? 'Danışmanlık' : 'Normal'
+                    }</span></td>
+                        <td><span class="badge badge-${code.usage_limit}">${
+                      code.usage_limit === 'unlimited'
+                        ? 'Sınırsız'
+                        : 'Tek Kullanım'
+                    }</span></td>
+                        <td><span class="badge ${
+                          code.is_used ? 'badge-used' : 'badge-active'
+                        }">${code.is_used ? 'Kullanıldı' : 'Aktif'}</span></td>
+                        <td>${
+                          code.user_info
+                            ? Object.entries(code.user_info)
+                                .map(
+                                  ([k, v]) =>
+                                    `<div class="user-info-btn">${k}: ${v}</div>`
+                                )
+                                .join('')
+                            : '---'
+                        }</td>
+                        <td>${
+                          code.reading_result
+                            ? `<button class="action-btn view-btn" data-result="${encodeURIComponent(
+                                code.reading_result
+                              )}">Göster</button>`
+                            : '---'
+                        }</td>
+                        <td>${new Date(code.created_at).toLocaleString(
+                          'tr-TR'
+                        )}</td>
+                        <td><button class="action-btn delete-btn" onclick="deleteCode(${
+                          code.id
+                        })">🗑️</button></td>
+                    </tr>
+                `
+                  )
+                  .join('')}
+            </tbody>
+        </table>`;
+        container.innerHTML = html;
+
+        document.querySelectorAll('.view-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            showResultModal(
+              decodeURIComponent(btn.getAttribute('data-result'))
+            );
+          });
         });
+      }
 
-        // --- Message Display Function ---
-        function showMessage(type, text) {
-            const msgBox = document.getElementById('messageBox');
-            msgBox.textContent = text;
-            msgBox.className = 'message-box show';
-            msgBox.classList.add(type === 'success' ? 'success' : 'error-msg');
-            setTimeout(() => msgBox.classList.remove('show'), 5000);
-        }
+      function showResultModal(content) {
+        document.getElementById('modalContent').textContent = content;
+        document.getElementById('resultModal').style.display = 'flex';
+      }
+      function closeModal() {
+        document.getElementById('resultModal').style.display = 'none';
+      }
 
-        // --- Load Codes from Supabase ---
-        async function loadReferenceCodes() {
-            const container = document.getElementById('codesTableContainer');
-            container.innerHTML = '<div class="loading">Referans kodları yükleniyor...</div>';
+      function copyCode(code) {
+        navigator.clipboard.writeText(code);
+        showMessage('success', '✅ Kod panoya kopyalandı!');
+      }
 
-            const { data: codes, error } = await db
-                .from('reference_codes')
-                .select('*')
-                .order('created_at', { ascending: false });
+      function applyFilters() {
+        const readingType = document.getElementById('filterReadingType').value;
+        const codeType = document.getElementById('filterCodeType').value;
+        const usageLimit = document.getElementById('filterUsageLimit').value;
+        const status = document.getElementById('filterStatus').value;
+        const startDate = document.getElementById('filterStartDate').value;
+        const endDate = document.getElementById('filterEndDate').value;
 
-            if (error) {
-                container.innerHTML = `<div class="error">Hata: Kodlar yüklenemedi. (${error.message})</div>`;
-                return;
-            }
+        let filtered = allCodes.filter((c) => {
+          if (readingType && c.reading_type !== readingType) return false;
+          if (codeType && c.type !== codeType) return false;
+          if (usageLimit && c.usage_limit !== usageLimit) return false;
+          if (status) {
+            if (status === 'active' && c.is_used) return false;
+            if (status === 'used' && !c.is_used) return false;
+          }
+          if (startDate && new Date(c.created_at) < new Date(startDate))
+            return false;
+          if (endDate && new Date(c.created_at) > new Date(endDate))
+            return false;
+          return true;
+        });
+        renderCodes(filtered);
+      }
 
-            if (codes.length === 0) {
-                container.innerHTML = '<p class="loading">Henüz referans kodu oluşturulmadı.</p>';
-                return;
-            }
-
-            const html = `
-                <h2>Referans Kodları</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 15%;">Kod</th>
-                            <th style="width: 10%;">Okuma Türü</th>
-                            <th style="width: 10%;">Kod Türü</th>
-                            <th style="width: 10%;">Limit</th>
-                            <th style="width: 10%;">Durum</th>
-                            <th style="width: 15%;">Kullanıcı Bilgileri</th>
-                            <th style="width: 15%;">Okuma Sonucu</th>
-                            <th style="width: 10%;">Oluşturulma</th>
-                            <th style="width: 5%;">İşlemler</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${codes.map(code => `
-                            <tr>
-                                <td><code>${code.code}</code></td>
-                                <td>${code.reading_type || '---'}</td>
-                                <td><span class="badge badge-${code.type}">${code.type === 'consultancy' ? 'Danışmanlık' : 'Normal'}</span></td>
-                                <td><span class="badge badge-${code.usage_limit}">${code.usage_limit === 'unlimited' ? 'Sınırsız' : 'Tek Kullanım'}</span></td>
-                                <td><span class="badge ${code.is_used ? 'badge-used' : 'badge-active'}">${code.is_used ? 'Kullanıldı' : 'Aktif'}</span></td>
-                                <td>${code.user_info ? `<pre>${JSON.stringify(code.user_info, null, 2)}</pre>` : '---'}</td>
-                                <td>${code.reading_result ? `<pre>${code.reading_result}</pre>` : '---'}</td>
-                                <td>${new Date(code.created_at).toLocaleDateString('tr-TR')}</td>
-                                <td>
-                                    <button class="action-btn delete-btn" onclick="deleteCode(${code.id})">🗑️</button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            container.innerHTML = html;
-        }
-
-        // --- Create New Code in Supabase ---
-        async function createReferenceCode() {
-            const createBtn = document.getElementById('createBtn');
-            createBtn.disabled = true;
-            createBtn.textContent = 'Oluşturuluyor...';
-
-            const readingType = document.getElementById('readingTypeSelect').value;
-            const codeType = document.getElementById('codeTypeSelect').value;
-            const usageLimit = document.getElementById('usageLimitSelect').value;
-            const generatedCode = 'SYL-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-
-            const newCode = {
-                code: generatedCode,
-                reading_type: readingType,
-                type: codeType,
-                usage_limit: usageLimit,
-                is_used: false
-            };
-
-            const { data, error } = await db.from('reference_codes').insert([newCode]).select();
-
-            if (error) {
-                showMessage('error', `Hata: Kod oluşturulamadı. (${error.message})`);
-            } else {
-                showMessage('success', `✅ Kod başarıyla oluşturuldu: ${generatedCode}`);
-                loadReferenceCodes();
-            }
-
-            createBtn.disabled = false;
-            createBtn.textContent = 'Oluştur';
-        }
-
-        // --- Delete Code from Supabase ---
-        async function deleteCode(id) {
-            if (!confirm('Bu kodu kalıcı olarak silmek istediğinizden emin misiniz?')) return;
-
-            const { error } = await db.from('reference_codes').delete().eq('id', id);
-
-            if (error) {
-                alert(`Hata: Kod silinemedi. (${error.message})`);
-            } else {
-                loadReferenceCodes();
-            }
-        }
+      function resetFilters() {
+        document.getElementById('filterReadingType').value = '';
+        document.getElementById('filterCodeType').value = '';
+        document.getElementById('filterUsageLimit').value = '';
+        document.getElementById('filterStatus').value = '';
+        document.getElementById('filterStartDate').value = '';
+        document.getElementById('filterEndDate').value = '';
+        renderCodes(allCodes);
+      }
     </script>
-</body>
+  </body>
 </html>
